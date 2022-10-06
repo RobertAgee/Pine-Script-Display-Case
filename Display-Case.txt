@@ -1,0 +1,277 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © CubanEmissary
+
+//@version=5
+indicator("Display Case", explicit_plot_zorder = true)
+
+//Target Data Source
+src = input(close, title="Select Data Source")
+
+//Select Indicator
+preset5 = input.string(title="Ind 5", defval="None", options=["Source", "RSI", "TSI", "Stochastic", "MFI", "RVSI", "ROC", "SMA", "HMA", "VWMA", "RMA", "EMA", "LSMA", "SMMA", "TMA", "WMA", "WILDMA", "None"])
+preset4 = input.string(title="Ind 4", defval="None", options=["Source", "RSI", "TSI", "Stochastic", "MFI", "RVSI", "ROC", "SMA", "HMA", "VWMA", "RMA", "EMA", "LSMA", "SMMA", "TMA", "WMA", "WILDMA", "None"])
+preset3 = input.string(title="Ind 3", defval="None", options=["Source", "RSI", "TSI", "Stochastic", "MFI", "RVSI", "ROC", "SMA", "HMA", "VWMA", "RMA", "EMA", "LSMA", "SMMA", "TMA", "WMA", "WILDMA", "None"])
+preset2 = input.string(title="Ind 2", defval="None", options=["Source", "RSI", "TSI", "Stochastic", "MFI", "RVSI", "ROC", "SMA", "HMA", "VWMA", "RMA", "EMA", "LSMA", "SMMA", "TMA", "WMA", "WILDMA", "None"])
+preset1 = input.string(title="Ind 1", defval="None", options=["Source", "RSI", "TSI", "Stochastic", "MFI", "RVSI", "ROC", "SMA", "HMA", "VWMA", "RMA", "EMA", "LSMA", "SMMA", "TMA", "WMA", "WILDMA", "None"])
+
+//Indicator Colors
+ic5 = input.color(color.orange, "Ind 5 Color")
+ic4 = input.color(color.red, "Ind 4 Color")
+ic3 = input.color(color.lime, "Ind 3 Color")
+ic2 = input.color(color.fuchsia, "Ind 2 Color")
+ic1 = input.color(color.silver, "Ind 1 Color")
+
+//Indicator Candle Length
+len5 = input.int(2, "Ind 5 Candle Length")
+len4 = input.int(2, "Ind 4 Candle Length")
+len3 = input.int(2, "Ind 3 Candle Length")
+len2 = input.int(2, "Ind 2 Candle Length")
+len1 = input.int(2, "Ind 1 Candle Length")
+
+//Indicator Y-Adjust
+y5 = input.int(0, "Ind 5 Y-Adjust")
+y4 = input.int(0, "Ind 4 Y-Adjust")
+y3 = input.int(0, "Ind 3 Y-Adjust")
+y2 = input.int(0, "Ind 2 Y-Adjust")
+y1 = input.int(0, "Ind 1 Y-Adjust")
+
+//Partition Line Y-Adjust Values 
+p3 = input(300, "Partition Line 3 Y-Adjust")
+p2 = input(200, "Partition Line 2 Y-Adjust")
+p1 = input(100, "Partition Line 1 Y-Adjust")
+
+//Partition Fill Colors 
+pf3 = input.color(#1976d2, "Partition Fill 3")
+pf2 = input.color(#1976d2, "Partition Fill 2")
+pf1 = input.color(#1976d2, "Partition Fill 1")
+
+//Partition Line Colors 
+pl3 = input.color(#fff176, "Partition Line 3")
+pl2 = input.color(#fff176, "Partition Line 2")
+pl1 = input.color(#fff176, "Partition Line 1")
+
+//Indicator Switch Functions
+float e5 = switch preset5
+    "Source" => src
+    "RSI" => ta.rsi(src, len5)
+    "TSI" => ta.tsi(src, len5, len5*2) 
+    "Stochastic" => ta.stoch(src, high, low, len5)
+    "MFI" => ta.mfi(src, len5)
+    "ROC" => ta.roc(src,len5)
+    "RVSI" => ta.rsi(ta.ema(ta.cum((ta.change(src))*volume), len5), len5*2)
+    "SMA" => ta.sma(src,len5) 
+    "HMA" => ta.hma(src,len5) 
+    "VWMA" => ta.vwma(src,len5) 
+    "RMA" => ta.rma(src,len5) 
+    "EMA" => ta.ema(src,len5)
+    "LSMA" => ta.linreg(src,len5, 0)
+    "TMA" => ta.sma(src,len5)/len5
+    "WMA" => ta.wma(src,len5)
+    "WILDMA" => nz(src[1]) + (close-nz(src[1]))/len5
+    "None" => float(na)
+    => 
+        float(na)
+    
+float e4 = switch preset4
+    "Source" => src
+    "RSI" => ta.rsi(src, len4)
+    "TSI" => ta.tsi(src, len4, len4*2) 
+    "Stochastic" => ta.stoch(src, high, low, len4)
+    "MFI" => ta.mfi(src, len4)
+    "ROC" => ta.roc(src,len4)
+    "RVSI" => ta.rsi(ta.ema(ta.cum((ta.change(src))*volume), len4), len4*2)
+    "SMA" => ta.sma(src,len4) 
+    "HMA" => ta.hma(src,len4) 
+    "VWMA" => ta.vwma(src,len4) 
+    "RMA" => ta.rma(src,len4) 
+    "EMA" => ta.ema(src,len4)
+    "LSMA" => ta.linreg(src,len4, 0)
+    "TMA" => ta.sma(src,len4)/len4
+    "WMA" => ta.wma(src,len4)
+    "WILDMA" => nz(src[1]) + (close-nz(src[1]))/len4
+    "None" => float(na)
+    => 
+        float(na)
+
+float e3 = switch preset3
+    "Source" => src
+    "RSI" => ta.rsi(src, len3)
+    "TSI" => ta.tsi(src, len3, len3*2) 
+    "Stochastic" => ta.stoch(src, high, low, len3)
+    "MFI" => ta.mfi(src, len3)
+    "ROC" => ta.roc(src,len3)
+    "RVSI" => ta.rsi(ta.ema(ta.cum((ta.change(src))*volume), len3), len3*2)
+    "SMA" => ta.sma(src,len3) 
+    "HMA" => ta.hma(src,len3) 
+    "VWMA" => ta.vwma(src,len3) 
+    "RMA" => ta.rma(src,len3) 
+    "EMA" => ta.ema(src,len3)
+    "LSMA" => ta.linreg(src,len3, 0)
+    "TMA" => ta.sma(src,len3)/len3
+    "WMA" => ta.wma(src,len3)
+    "WILDMA" => nz(src[1]) + (close-nz(src[1]))/len3
+    "None" => float(na) 
+    => 
+        float(na)
+
+float e2 = switch preset2
+    "Source" => src
+    "RSI" => ta.rsi(src, len2)
+    "TSI" => ta.tsi(src, len2, len2*2) 
+    "Stochastic" => ta.stoch(src, high, low, len2)
+    "MFI" => ta.mfi(src, len2)
+    "ROC" => ta.roc(src,len2)
+    "RVSI" => ta.rsi(ta.ema(ta.cum((ta.change(src))*volume), len2), len2*2)
+    "SMA" => ta.sma(src,len2) 
+    "HMA" => ta.hma(src,len2) 
+    "VWMA" => ta.vwma(src,len2) 
+    "RMA" => ta.rma(src,len2) 
+    "EMA" => ta.ema(src,len2)
+    "LSMA" => ta.linreg(src,len2, 0)
+    "TMA" => ta.sma(src,len2)/len2
+    "WMA" => ta.wma(src,len2)
+    "WILDMA" => nz(src[1]) + (close-nz(src[1]))/len2
+    => 
+        float(na)
+
+float e1 = switch preset1
+    "Source" => src
+    "RSI" => ta.rsi(src, len1)
+    "TSI" => ta.tsi(src,len1,len1*2) 
+    "Stochastic" => ta.stoch(src, high, low, len1)
+    "MFI" => ta.mfi(src,len1)
+    "ROC" => ta.roc(src,len1)
+    "RVSI" => ta.rsi(ta.ema(ta.cum((ta.change(src))*volume), len1), len1*2)
+    "SMA" => ta.sma(src,len1) 
+    "HMA" => ta.hma(src,len1) 
+    "VWMA" => ta.vwma(src,len1) 
+    "RMA" => ta.rma(src,len1) 
+    "EMA" => ta.ema(src,len1)
+    "LSMA" => ta.linreg(src,len1, 0)
+    "TMA" => ta.sma(src,len1)/len1
+    "WMA" => ta.wma(src,len1)
+    "WILDMA" => nz(src[1]) + (close-nz(src[1]))/len1
+    => 
+        float(na)
+        
+
+//Floor Tile Reference Values
+top20 = 20
+top19 = 19
+top18 = 18
+top17 = 17
+top16 = 16
+top15 = 15
+top14 = 14
+top13 = 13
+top12 = 12
+top11 = 11
+top10 = 10
+top9 = 9
+top8 = 8
+top7 = 7
+top6 = 6
+top5 = 5
+top4 = 4
+top3 = 3
+top2 = 2
+top1 = 1
+top0 = 0
+topn1 = -1
+topn5 = -5
+
+
+//Floor Tile Color Generator
+//Tilecolor 1 editable in sourcecode only
+//Tilecolor 2 must remain na to get checkboard effect
+
+color tilecolor1 = color.white
+color tilecolor2 = na
+
+if tilecolor1[45] == color.white
+    tilecolor1 := na
+    tilecolor2 := color.white
+else if tilecolor1[45] == na
+    tilecolor1 := color.white
+    tilecolor2 := na
+else
+    na
+
+
+//Plots the Floor Tiles
+h20 = plot(top20, title="20", color=color.new(tilecolor1, 80), editable = false, linewidth=1, offset=10)
+h19 = plot(top19, title="20", color=color.new(#000000, 100), editable = false, offset=9)
+h18 = plot(top18, title="20", color=color.new(#000000, 100), editable = false, offset=8, linewidth = 4)
+h17 = plot(top17, title="20", color=color.new(#000000, 100), editable = false, offset=7, linewidth = 4)
+h16 = plot(top16, title="20", color=color.new(#000000, 100), editable = false, offset=6, linewidth = 4)
+h15 = plot(top15, title="20", color=color.new(#000000, 100), editable = false, offset=5, linewidth = 4)
+h14 = plot(top14, title="20", color=color.new(#000000, 100), editable = false, offset=4, linewidth = 4)
+h13 = plot(top13, title="20", color=color.new(#000000, 100), editable = false, offset=3, linewidth = 4)
+h12 = plot(top12, title="20", color=color.new(#000000, 100), editable = false, offset=2, linewidth = 4)
+h11 = plot(top11, title="20", color=color.new(#000000, 100), editable = false, offset=1, linewidth = 4)
+h10 = plot(top10, title="20", color=color.new(#000000, 100), editable = false, offset=0, linewidth = 4)
+h9 = plot(top9, title="20", color=color.new(#000000, 100), editable = false, offset=-1, linewidth = 4)
+h8 = plot(top8, title="20", color=color.new(#000000, 100), editable = false, offset=-2, linewidth = 4)
+h7 = plot(top7, title="20", color=color.new(#000000, 100), editable = false, offset=-3, linewidth = 4)
+h6 = plot(top6, title="20", color=color.new(#000000, 100), editable = false, offset=-4, linewidth = 4)
+h5 = plot(top5, title="20", color=color.new(#000000, 100), editable = false, offset=-5, linewidth = 4)
+h4 = plot(top4, title="20", color=color.new(#000000, 100), editable = false, offset=-6, linewidth = 4)
+h3 = plot(top3, title="20", color=color.new(#000000, 100), editable = false, offset=-7, linewidth = 4)
+h2 = plot(top2, title="20", color=color.new(#000000, 100), editable = false, offset=-8, linewidth = 4)
+h1 = plot(top1, title="20", color=color.new(#000000, 100), editable = false, offset=-9, linewidth = 4)
+h0 = plot(top0, title="20", color=color.new(tilecolor1, 80), editable = false, offset=-10, linewidth = 2)
+hn5 = plot(topn5, title="20", color=color.new(#ffffff, 75), editable = false, offset=-10, linewidth = 1)
+
+//Floor Tile Filling
+fill(h20, h19, title="fill", color=color.new(tilecolor1, 65), editable=false)
+fill(h19, h18, title="fill", color=color.new(tilecolor1, 65), editable=false)
+fill(h18, h17, title="fill", color=color.new(tilecolor1, 65), editable=false)
+fill(h17, h16, title="fill", color=color.new(tilecolor2, 65), editable=false)
+fill(h16, h15, title="fill", color=color.new(tilecolor2, 65), editable=false)
+fill(h15, h14, title="fill", color=color.new(tilecolor2, 65), editable=false)
+fill(h14, h13, title="fill", color=color.new(tilecolor1, 65), editable=false)
+fill(h13, h12, title="fill", color=color.new(tilecolor1, 65), editable=false)
+fill(h12, h11, title="fill", color=color.new(tilecolor1, 65), editable=false)
+fill(h11, h10, title="fill", color=color.new(tilecolor2, 65), editable=false)
+fill(h10, h9, title="fill", color=color.new(tilecolor2, 65), editable=false)
+fill(h9, h8, title="fill", color=color.new(tilecolor2, 65), editable=false)
+fill(h8, h7, title="fill", color=color.new(tilecolor1, 65), editable=false)
+fill(h7, h6, title="fill", color=color.new(tilecolor1, 65), editable=false)
+fill(h6, h5, title="fill", color=color.new(tilecolor1, 65), editable=false)
+fill(h5, h4, title="fill", color=color.new(tilecolor2, 65), editable=false)
+fill(h4, h3, title="fill", color=color.new(tilecolor2, 65), editable=false)
+fill(h3, h2, title="fill", color=color.new(tilecolor2, 65), editable=false)
+fill(h2, h1, title="fill", color=color.new(tilecolor1, 65), editable=false)
+fill(h1, h0, title="fill", color=color.new(tilecolor1, 65), editable=false)
+fill(h0, hn5, title="fill", color=color.new(tilecolor1, 65), editable=false)
+
+//Partition lines for fill() references
+k1 = plot(p1, title="Partition Line 1", color=pl1, linewidth=2, offset=10, editable=false)
+k2 = plot(p2, title="Partition Line 2", color=pl2, linewidth=2, offset=10, editable=false)
+k3 = plot(p3, title="Partition Line 3", color=pl3, linewidth=2, offset=10, editable=false)
+
+
+//Color Filling the Partitions
+//Edit in Settings
+fill(h20, k1, title="Partition Fill 1", color=color.new(pf1, 75), editable=false)
+fill(k1, k2, title="Partition FIll 2", color=color.new(pf2, 75), editable=false)
+fill(k2, k3, title="Partition Fill 3", color=color.new(pf3, 75), editable=false)
+
+//Plot Equations
+plot(e5+y5, title="Ind 5", color=ic5, linewidth=2)
+plot(e4+y4, title="Ind 4", color=ic4, linewidth=2)
+plot(e3+y3, title="Ind 3", color=ic3, linewidth=2)
+plot(e2+y2, title="Ind 2", color=ic2, linewidth=2)
+plot(e1+y1, title="Ind 1", color=ic1, linewidth=2)
+
+//Indicator Labels
+label1 = label.new(bar_index+5, e1+y1, text=string(preset1)+" "+str.tostring(math.round(e1)), style=label.style_label_left, textcolor=ic1, size=size.normal, color=color.rgb(0, 0, 0, 100), xloc=xloc.bar_index, yloc=yloc.price)
+label.delete(label1[1])
+label2 = label.new(bar_index+5, e2+y2, text=string(preset2)+" "+str.tostring(math.round(e2)), style=label.style_label_left, textcolor=ic2, size=size.normal, color=color.rgb(0, 0, 0, 100), xloc=xloc.bar_index, yloc=yloc.price)
+label.delete(label2[1])
+label3 = label.new(bar_index+5, e3+y3, text=string(preset3)+" "+str.tostring(math.round(e3)), style=label.style_label_left, textcolor=ic3, size=size.normal, color=color.rgb(0, 0, 0, 100), xloc=xloc.bar_index, yloc=yloc.price)
+label.delete(label3[1])
+label4 = label.new(bar_index+5, e4+y4, text=string(preset4)+" "+str.tostring(math.round(e4)), style=label.style_label_left, textcolor=ic4, size=size.normal, color=color.rgb(0, 0, 0, 100), xloc=xloc.bar_index, yloc=yloc.price)
+label.delete(label4[1])
+label5 = label.new(bar_index+10, e5+y5, text=string(preset5)+" "+str.tostring(math.round(e5)), style=label.style_label_left, textcolor=ic5, size=size.normal, color=color.rgb(0, 0, 0, 100), xloc=xloc.bar_index, yloc=yloc.price)
+label.delete(label5[1])
